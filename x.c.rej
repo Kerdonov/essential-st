@@ -1,0 +1,23 @@
+--- x.c	2022-03-13 02:45:34.586842452 +0400
++++ x.c	2022-03-13 02:45:34.590175835 +0400
+@@ -1834,11 +1834,20 @@
+ 	/* 1. shortcuts */
+ 	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
+ 		if (ksym == bp->keysym && match(bp->mod, e->state)) {
++			if (bp -> func != autocomplete)
++				autocomplete ((const Arg []) { ACMPL_DEACTIVATE });
+ 			bp->func(&(bp->arg));
+ 			return;
+ 		}
+ 	}
+ 
++	if (!(
++		len == 0 &&
++		e -> state & ~ignoremod		// ACMPL_ISSUE: I'm not sure that this is the right way
++				| ACMPL_MOD == ACMPL_MOD
++	))
++		autocomplete ((const Arg []) { ACMPL_DEACTIVATE });
++
+ 	/* 2. custom keys from config.h */
+ 	if ((customkey = kmap(ksym, e->state))) {
+ 		ttywrite(customkey, strlen(customkey), 1);
